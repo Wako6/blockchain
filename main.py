@@ -79,15 +79,9 @@ class BlockCode:
         self._hash = self.get_hash()
 
 
-class TextBlock(BlockCode):
-
-    def __init__(self, previous_block_hash, text, *args, **kwargs):
-        super().__init__(previous_block_hash, text, *args, **kwargs)
-
-
 class BlockChain:
 
-    def __init__(self, genesis_message="Genesis Block"):
+    def __init__(self, genesis_message="[Genesis Block]"):
         self.chain = []
         genesis_block = BlockCode("0", genesis_message, index=1)
         self.chain.append(genesis_block)
@@ -103,3 +97,27 @@ class BlockChain:
             if i != 0:
                 print()
             print(block)
+
+    def is_valid(self):
+        iterator = iter(self.chain)
+        previous_block = next(iterator)
+
+        while True:
+            try:
+                block = next(iterator)
+            except StopIteration:
+                break
+
+            if block.previous_hash != previous_block.hash:
+                return False
+
+            previous_block = block
+
+        return True
+
+    def serialize(self):
+        pass
+
+    @staticmethod
+    def deserialize():
+        pass
