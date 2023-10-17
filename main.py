@@ -78,6 +78,29 @@ class BlockCode:
     def hash(self, hash):
         self._hash = self.get_hash()
 
+    def serialize(self):
+        return json.dumps(
+            {
+                "previous_hash": self._previous_hash,
+                "content": self._content,
+                "index": self._index,
+                "datetime": self._datetime,
+                "hash": self._hash
+            },
+            indent=4,
+            sort_keys=True)
+
+    @staticmethod
+    def deserialize(json):
+        block_dict = json.loads
+        print(json.get("previous_hash"))
+        # block = BlockCode("0", "[Genesis Block]")
+        # block._previous_hash = json["previous_hash"]
+        # block._content = json["content"]
+        # block._index = json["index"]
+        # block._datetime = json["datetime"]
+        # block._hash = json["hash"]
+
 
 class BlockChain:
 
@@ -85,6 +108,9 @@ class BlockChain:
         self.chain = []
         genesis_block = BlockCode("0", genesis_message, index=1)
         self.chain.append(genesis_block)
+
+    def __getitem__(self, index):
+        return self.chain[index]
 
     def add_block(self, content):
         block = BlockCode(self.chain[-1].hash,
