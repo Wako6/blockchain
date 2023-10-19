@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from .block import Block
+from block import Block
 
 
 class BlockChain:
@@ -88,21 +88,23 @@ class BlockChain:
 
     @classmethod
     def load(cls, filepath):
-
-        class BadFormatExtension(Exception):
-
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-
+        BadFormatExtension = type("BadFormatExtension", (Exception, ), {})
         if not filepath.endswith(BlockChain.save_extension):
             raise BadFormatExtension(
                 f"Load function in {cls.__name__} waiting a JSON file")
 
         filepath = Path(filepath)
 
+        if not filepath.exists():
+            raise FileExistsError(f"{filepath} does not exist")
+
         block_data = None
         if filepath.exists():
             with open(filepath, "r") as file:
                 block_data = file.read()
 
-        return cls.deserialize(block_data)
+        EmptyFileError = type("EmptyFileError", (Exception, ), {})
+        if block_data is None or block_data.strip() == "":
+            raise EmptyFileError(f"{filepath} is empty")
+
+        cls.deserialize(block_data)

@@ -22,6 +22,12 @@ class Block:
     def __repr__(self):
         return self.__str__()
 
+    def __eq__(self, other):
+        self_dict = self.serialize(to_json=False)
+        other_dict = other.serialize(to_json=False)
+
+        return all((other_dict.get(k) == v for k, v in self_dict.items()))
+
     def get_hash(self):
         data = {
             "index": self._index,
